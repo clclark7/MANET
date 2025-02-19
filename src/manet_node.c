@@ -12,7 +12,7 @@
 
 int sockfd;
 
-// ✅ HELLO Message Sender Thread
+// HELLO Message Sender Thread
 void *send_hello(void *arg) {
     int sockfd = *((int *)arg);
     struct sockaddr_in broadcast_addr;
@@ -39,7 +39,7 @@ void *send_hello(void *arg) {
 int main() {
     struct sockaddr_in server_addr, client_addr;
 
-    // ✅ Step 1: Create UDP socket
+    // Create UDP socket
     sockfd = socket(AF_INET, SOCK_DGRAM, 0);
     if (sockfd < 0) {
         perror("Socket creation failed");
@@ -59,12 +59,12 @@ int main() {
 
     printf("[MANET NODE] Listening on port %d\n", PORT);
 
-    // ✅ Step 3: Start HELLO sender thread
+    // Start HELLO sender thread
     pthread_t hello_thread;
     pthread_create(&hello_thread, NULL, send_hello, (void *)&sockfd);
     pthread_detach(hello_thread);
 
-    // ✅ Step 4: Listen for incoming messages
+    //Listen for incoming messages
     while (1) {
         char buffer[BUFFER_SIZE];
         socklen_t len = sizeof(client_addr);
