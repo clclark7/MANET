@@ -12,8 +12,8 @@
 
 int sockfd;
 
-// HELLO Message Sender Thread
-void *send_hello(void *arg) {
+// BROADCAST Message Sender Thread
+void *broadcast(void *arg) {
     int sockfd = *((int *)arg);
     struct sockaddr_in broadcast_addr;
 
@@ -26,10 +26,10 @@ void *send_hello(void *arg) {
     setsockopt(sockfd, SOL_SOCKET, SO_BROADCAST, &broadcast_enable, sizeof(broadcast_enable));
 
     while (1) {
-        char hello_msg[] = "HELLO from node!";
-        sendto(sockfd, hello_msg, strlen(hello_msg), 0,
+        char broadcast_msg[] = "broadcast from node!";
+        sendto(sockfd, broadcast_msg, strlen(broadcast_msg), 0,
                (struct sockaddr *)&broadcast_addr, sizeof(broadcast_addr));
-        printf("[HELLO] Broadcast sent!\n");
+        printf("[BROADCAST] Broadcast sent!\n");
 
         sleep(5);
     }
@@ -46,7 +46,7 @@ int main() {
         exit(EXIT_FAILURE);
     }
 
-    // ✅ Step 2: Bind to port
+    // Bind to port
     memset(&server_addr, 0, sizeof(server_addr));
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(PORT);
@@ -59,10 +59,10 @@ int main() {
 
     printf("[MANET NODE] Listening on port %d\n", PORT);
 
-    // Start HELLO sender thread
-    pthread_t hello_thread;
-    pthread_create(&hello_thread, NULL, send_hello, (void *)&sockfd);
-    pthread_detach(hello_thread);
+    // Start BROADCAST sender thread
+    pthread_t broadcast_thread;
+    pthread_create(&broadcast_thread, NULL, broadcast, (void *)&sockfd);
+    pthread_detach(broadcast_thread);
 
     //Listen for incoming messages
     while (1) {
